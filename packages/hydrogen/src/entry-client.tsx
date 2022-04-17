@@ -13,8 +13,6 @@ import {useServerResponse} from './framework/Hydration/rsc';
 import {ServerStateProvider} from './foundation/ServerStateProvider';
 import type {DevServerMessage} from './utilities/devtools';
 
-const DevTools = React.lazy(() => import('./components/DevTools'));
-
 const renderHydrogen: ClientHandler = async (ClientWrapper, config) => {
   const root = document.getElementById('root');
 
@@ -48,9 +46,6 @@ const renderHydrogen: ClientHandler = async (ClientWrapper, config) => {
           </Suspense>
         </ErrorBoundary>
       </RootComponent>
-      {typeof DevTools !== 'undefined' && config?.showDevTools ? (
-        <DevTools />
-      ) : null}
     </>,
     {
       onRecoverableError(e: any) {

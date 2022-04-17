@@ -45,6 +45,7 @@ import {RSC_PATHNAME, EVENT_PATHNAME, EVENT_PATHNAME_REGEX} from './constants';
 import {stripScriptsFromTemplate} from './utilities/template';
 import {RenderType} from './utilities/log/log';
 import {Analytics} from './foundation/Analytics/Analytics.server';
+import {DevTools} from './foundation/DevTools/DevTools.server';
 import {ServerAnalyticsRoute} from './foundation/Analytics/ServerAnalyticsRoute.server';
 
 declare global {
@@ -660,6 +661,9 @@ function buildAppRSC({
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
+        <Suspense fallback={null}>
+          <DevTools />
+        </Suspense>
       </PreloadQueries>
     </ServerRequestProvider>
   );
@@ -699,6 +703,9 @@ function buildAppSSR(
             </Suspense>
             <Suspense fallback={null}>
               <Analytics />
+            </Suspense>
+            <Suspense fallback={null}>
+              <DevTools />
             </Suspense>
           </PreloadQueries>
         </ServerStateProvider>
