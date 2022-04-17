@@ -16,6 +16,7 @@ type CommonOptions = {
   componentResponse: ServerComponentResponse;
   log: Logger;
   dev?: boolean;
+  showDevTools?: boolean;
 };
 
 export type RendererOptions = CommonOptions & {
@@ -62,6 +63,8 @@ export type ServerHandlerConfig = {
   routes?: ImportGlobEagerOutput;
   shopifyConfig: ShopifyConfig;
   serverAnalyticsConnectors?: Array<ServerAnalyticsConnector>;
+  // TODO remove experimental flag when devtools is stable
+  __EXPERIMENTAL__showDevTools?: boolean;
 };
 
 export type ClientHandlerConfig = {

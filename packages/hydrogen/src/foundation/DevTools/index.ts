@@ -1,1 +1,1 @@
-export {useServerAnalytics} from './hook';
+export {useServerPerformance} from './hook';

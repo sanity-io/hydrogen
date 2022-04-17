@@ -1,12 +1,12 @@
 import {useServerRequest} from '../ServerRequestProvider';
 
-export function useServerAnalytics(data?: any): any {
+export function useServerPerformance(data?: any): any {
   const request = useServerRequest();
   if (data)
-    request.ctx.analyticsData = Object.assign(
+    request.ctx.performanceData = Object.assign(
       {},
-      request.ctx.analyticsData,
+      request.ctx.performanceData,
       data
     );
-  return request.ctx.analyticsData;
+  return request.ctx.performanceData;
 }

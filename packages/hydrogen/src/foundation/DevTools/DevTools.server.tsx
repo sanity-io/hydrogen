@@ -1,9 +1,9 @@
 import React from 'react';
-import {useServerAnalytics} from './hook';
+import {useServerPerformance} from './hook';
 import {DevTools as DevToolsClient} from './DevTools.client';
 import {useServerRequest} from '../ServerRequestProvider';
 
-const DELAY_KEY = 'analytics-delay';
+const DELAY_KEY = 'devtools-delay';
 
 export function DevTools() {
   const cache = useServerRequest().ctx.cache;
@@ -33,13 +33,13 @@ export function DevTools() {
   }
 
   // Make sure all queries have returned before rendering the Analytics server component
-  cache.forEach((cacheFn) => {
+  cache.forEach((cacheFn: any) => {
     if (cacheFn && typeof cacheFn === 'function') {
       const result = cacheFn.call();
       if (result instanceof Promise) throw result;
     }
   });
 
-  const analyticsData = useServerAnalytics();
-  return <DevToolsClient dataFromServer={analyticsData} />;
+  const performanceData = useServerPerformance();
+  return <DevToolsClient dataFromServer={{performance: performanceData}} />;
 }

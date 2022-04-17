@@ -69,6 +69,7 @@ interface RequestHandlerOptions {
   context?: RuntimeContext;
   nonce?: string;
   buyerIpHeader?: string;
+  showDevTools?: boolean;
 }
 
 export interface RequestHandler {
@@ -79,8 +80,15 @@ export interface RequestHandler {
 
 export const renderHydrogen = (
   App: any,
-  {shopifyConfig, routes, serverAnalyticsConnectors}: ServerHandlerConfig
+  {
+    shopifyConfig,
+    routes,
+    serverAnalyticsConnectors,
+    // showDevTools,
+    ...options
+  }: ServerHandlerConfig
 ) => {
+  const showDevTools = options.__EXPERIMENTAL__showDevTools ?? true;
   const handleRequest: RequestHandler = async function (rawRequest, options) {
     const {
       indexTemplate,
@@ -160,6 +168,7 @@ export const renderHydrogen = (
       isStreamable,
       componentResponse,
       response: streamableResponse,
+      showDevTools,
     };
 
     if (isReactHydrationRequest) {
@@ -201,7 +210,7 @@ async function render(
     log,
     template,
     nonce,
-    dev,
+    showDevTools,
   }: RendererOptions
 ) {
   const state = {pathname: url.pathname, search: url.search};
@@ -214,6 +223,7 @@ async function render(
       response: componentResponse,
       routes,
       log,
+      showDevTools,
     },
     {template}
   );
@@ -285,6 +295,7 @@ async function stream(
     template,
     nonce,
     dev,
+    showDevTools,
   }: StreamerOptions
 ) {
   const state = {pathname: url.pathname, search: url.search};
@@ -301,6 +312,7 @@ async function stream(
       response: componentResponse,
       log,
       routes,
+      showDevTools,
     },
     {template: noScriptTemplate}
   );
@@ -583,6 +595,7 @@ async function hydrate(
     componentResponse,
     isStreamable,
     log,
+    showDevTools,
   }: HydratorOptions
 ) {
   const state = JSON.parse(url.searchParams.get('state') || '{}');
@@ -594,6 +607,7 @@ async function hydrate(
     response: componentResponse,
     log,
     routes,
+    showDevTools,
   });
 
   if (__WORKER__) {
@@ -639,6 +653,7 @@ type BuildAppOptions = {
   response: ServerComponentResponse;
   log: Logger;
   routes?: ImportGlobEagerOutput;
+  showDevTools?: boolean;
 };
 
 function buildAppRSC({
@@ -648,12 +663,17 @@ function buildAppRSC({
   response,
   log,
   routes,
+  showDevTools,
 }: BuildAppOptions) {
   const hydrogenServerProps = {request, response, log};
   const serverProps = {...state, ...hydrogenServerProps, routes};
 
   request.ctx.router.serverProps = serverProps;
 
+  console.log(
+    '🚀 ~ file: entry-server.tsx ~ line 674 ~ showDevTools',
+    showDevTools
+  );
   const AppRSC = (
     <ServerRequestProvider request={request} isRSC={true}>
       <PreloadQueries request={request}>
@@ -661,9 +681,11 @@ function buildAppRSC({
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
-        <Suspense fallback={null}>
-          <DevTools />
-        </Suspense>
+        {showDevTools && (
+          <Suspense fallback={null}>
+            <DevTools />
+          </Suspense>
+        )}
       </PreloadQueries>
     </ServerRequestProvider>
   );
@@ -672,7 +694,7 @@ function buildAppRSC({
 }
 
 function buildAppSSR(
-  {App, state, request, response, log, routes}: BuildAppOptions,
+  {App, state, request, response, log, routes, showDevTools}: BuildAppOptions,
   htmlOptions: Omit<Parameters<typeof Html>[0], 'children'> & {}
 ) {
   const {AppRSC} = buildAppRSC({
@@ -682,7 +704,13 @@ function buildAppSSR(
     response,
     log,
     routes,
+    showDevTools,
   });
+
+  console.log(
+    '🚀 ~ file: entry-server.tsx ~ line 705 ~ showDevTools',
+    showDevTools
+  );
 
   const [rscReadableForFizz, rscReadableForFlight] =
     rscRenderToReadableStream(AppRSC).tee();
@@ -704,9 +732,11 @@ function buildAppSSR(
             <Suspense fallback={null}>
               <Analytics />
             </Suspense>
-            <Suspense fallback={null}>
-              <DevTools />
-            </Suspense>
+            {showDevTools && (
+              <Suspense fallback={null}>
+                <DevTools />
+              </Suspense>
+            )}
           </PreloadQueries>
         </ServerStateProvider>
       </ServerRequestProvider>
