@@ -1,1 +1,0 @@
-export {useServerPerformance} from './hook';

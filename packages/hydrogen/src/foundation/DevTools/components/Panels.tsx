@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
-import {Navigation, useNavigationListener} from '@shopify/react-performance';
 
-import {Performance} from './Performance';
+import {Performance} from './Performance.client';
+import {Settings} from './Settings.client';
+import {GraphQL} from './GraphQL.client';
 
 export interface Props {
-  navigations?: Navigation[];
+  settings: {
+    locale: string;
+  };
 }
 
 interface Panel {
@@ -16,16 +19,17 @@ interface Panel {
 interface Panels {
   performance: Panel;
   settings: Panel;
+  graphql: Panel;
 }
 
-export function Panels({navigations}: Props) {
+export function Panels({settings}: Props) {
   // TODO: Persist/store the active panel
   const [selectedPanel, setSelectedPanel] = useState<number>(0);
-  const panels = getPanels();
+  const panels = getPanels({settings});
   const panelComponents = panels.map(({panel}) => panel);
 
   return (
-    <div style={{display: 'flex'}}>
+    <div style={{display: 'flex', height: '100%'}}>
       <div style={{borderRight: '1px solid', padding: '1em 0em'}}>
         {panels.map(({content, icon, id}, index) => {
           const active = selectedPanel === index;
@@ -47,61 +51,33 @@ export function Panels({navigations}: Props) {
           );
         })}
       </div>
-      <div style={{padding: '1.25em'}}>
+      <div style={{padding: '1.25em', width: '100%'}}>
         {panelComponents[selectedPanel ? selectedPanel : 0]}
       </div>
     </div>
   );
 }
 
-function SettingsPanel() {
-  return <Panel>Settings component</Panel>;
-}
-
-// function PerformancePanel() {
-//   const [lastNavigation, setLastNavigation] = useState<Navigation | null>(null);
-
-//   // listen for subsequent client-side navigations and update our state
-//   useNavigationListener((navigation) => {
-//     setLastNavigation(navigation);
-//   });
-
-//   if (lastNavigation == null) {
-//     return <p>no data</p>;
-//   }
-
-//   const {duration, isFullPageNavigation, target} = lastNavigation;
-
-//   // output some information about the last navigation
-//   const navigationType = isFullPageNavigation
-//     ? 'full page navigation'
-//     : 'single-page-app style navigation';
-
-//   return (
-//     <Panel>
-//       <p>
-//         The last navigation was to {target}. It was a {navigationType}{' '}
-//         navigation which took {duration / 1000} seconds to complete.
-//       </p>
-//     </Panel>
-//   );
-// }
-
 function Panel({children}: {children: React.ReactNode}) {
   return <div>{children}</div>;
 }
 
-function getPanels() {
+function getPanels({settings}: Props) {
   const panels: Panels = {
     settings: {
       content: 'Settings',
-      panel: <SettingsPanel />,
+      panel: <Settings {...settings} />,
       icon: '🎛',
     },
     performance: {
       content: 'Performance',
       panel: <Performance />,
       icon: '⏱',
+    },
+    graphql: {
+      content: 'GraphQL',
+      panel: <GraphQL />,
+      icon: '🌐',
     },
   };
 

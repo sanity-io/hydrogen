@@ -670,10 +670,6 @@ function buildAppRSC({
 
   request.ctx.router.serverProps = serverProps;
 
-  console.log(
-    '🚀 ~ file: entry-server.tsx ~ line 674 ~ showDevTools',
-    showDevTools
-  );
   const AppRSC = (
     <ServerRequestProvider request={request} isRSC={true}>
       <PreloadQueries request={request}>

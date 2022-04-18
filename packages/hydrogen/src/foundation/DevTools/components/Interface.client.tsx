@@ -42,7 +42,15 @@ export function Interface({children, onClose, onOpen, ...props}: Props) {
         onClick={onOpen}
       >
         <div style={{textAlign: 'left', flex: 1}}>
-          <Text>Dev tools</Text>
+          <span
+            style={{
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+              paddingRight: '0.5em',
+            }}
+          >
+            Dev tools
+          </span>
         </div>{' '}
         {open ? <CloseIcon /> : <HydrogenIcon />}
       </button>
@@ -53,30 +61,16 @@ export function Interface({children, onClose, onOpen, ...props}: Props) {
           top: '-1px',
           overflow: 'scroll',
           color: 'black',
-          height: '100%',
           background: 'white',
           border: '1px solid',
           boxShadow: '10px 10px 0px black',
-          maxWidth: '40em',
+          maxWidth: '50em',
           width: '100vw',
+          height: '50vh',
         }}
       >
         {children}
       </div>
     </div>
-  );
-}
-
-function Text({children}: {children: string}) {
-  return (
-    <span
-      style={{
-        fontFamily: 'monospace',
-        fontWeight: 'bold',
-        paddingRight: '0.5em',
-      }}
-    >
-      {children}
-    </span>
   );
 }

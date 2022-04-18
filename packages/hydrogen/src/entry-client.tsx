@@ -12,6 +12,7 @@ import {ErrorBoundary} from 'react-error-boundary';
 import {useServerResponse} from './framework/Hydration/rsc';
 import {ServerStateProvider} from './foundation/ServerStateProvider';
 import type {DevServerMessage} from './utilities/devtools';
+import {usePerformanceMark, Stage} from '@shopify/react-performance';
 
 const renderHydrogen: ClientHandler = async (ClientWrapper, config) => {
   const root = document.getElementById('root');
@@ -78,6 +79,7 @@ function Content({
     search: window.location.search,
   });
   const response = useServerResponse(serverState);
+  usePerformanceMark(Stage.Complete, window.location.pathname);
 
   return (
     <ServerStateProvider

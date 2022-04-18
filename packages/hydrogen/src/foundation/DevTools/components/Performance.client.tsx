@@ -1,20 +1,16 @@
 import React, {useState} from 'react';
 import {Navigation, NavigationListener} from '@shopify/react-performance';
+import {Table} from './Table';
+import {Heading} from './Heading';
 
-interface Props {
-  navigations?: Navigation[];
-}
-
-export function Performance({navigations: navsFromProps}: Props) {
-  const [stateNavs, setStateNavs] = useState<Navigation[]>([]);
-
-  const navigations = navsFromProps ? navsFromProps : stateNavs;
+export function Performance() {
+  const [navigations, setStateNavs] = useState<Navigation[]>([]);
 
   const lastNavigation = navigations[navigations.length - 1];
   const previousNavigations = navigations.slice(0, -1);
   const navigationItems = previousNavigations.map(
-    ({start, target, duration}) => (
-      <li key={`${start}${target}`}>
+    ({start, target, duration}, index) => (
+      <li key={`${start}${target}--${index}`}>
         <div>
           <p>{target}</p>
           <p>
@@ -30,7 +26,10 @@ export function Performance({navigations: navsFromProps}: Props) {
 
   const lastNavigationMarkup =
     lastNavigation == null ? null : (
-      <NavigationDetails navigation={lastNavigation} />
+      <>
+        <Heading>Page request</Heading>
+        <NavigationDetails navigation={lastNavigation} />
+      </>
     );
 
   return (
@@ -39,7 +38,7 @@ export function Performance({navigations: navsFromProps}: Props) {
       {lastNavigationMarkup}
       <NavigationListener
         onNavigation={(navigation: Navigation) => {
-          setStateNavs([...stateNavs.slice(-9), navigation]);
+          setStateNavs((navs) => [...navigations, navigation]);
         }}
       />
     </>
@@ -54,10 +53,12 @@ export function NavigationDetails({navigation}: NavigationDetailsProps) {
   const {start, duration, target} = navigation;
 
   return (
-    <>
-      <p>{target}</p>
-      <p>{duration}</p>
-      <p>{start}</p>
-    </>
+    <Table
+      items={[
+        {key: 'path', value: target},
+        {key: 'start', value: start.toString()},
+        {key: 'duration', value: duration.toString()},
+      ]}
+    />
   );
 }

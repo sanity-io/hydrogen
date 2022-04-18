@@ -1,12 +1,12 @@
 import React from 'react';
-import {useServerPerformance} from './hook';
 import {DevTools as DevToolsClient} from './DevTools.client';
 import {useServerRequest} from '../ServerRequestProvider';
 
 const DELAY_KEY = 'devtools-delay';
 
 export function DevTools() {
-  const cache = useServerRequest().ctx.cache;
+  const serverRequest = useServerRequest();
+  const cache = serverRequest.ctx.cache;
 
   // If render cache is empty, create a 50 ms delay so that React doesn't resolve this
   // component too early and potentially cause a mismatch in hydration
@@ -32,7 +32,7 @@ export function DevTools() {
     });
   }
 
-  // Make sure all queries have returned before rendering the Analytics server component
+  // Make sure all queries have returned before rendering
   cache.forEach((cacheFn: any) => {
     if (cacheFn && typeof cacheFn === 'function') {
       const result = cacheFn.call();
@@ -40,6 +40,12 @@ export function DevTools() {
     }
   });
 
-  const performanceData = useServerPerformance();
-  return <DevToolsClient dataFromServer={{performance: performanceData}} />;
+  console.log(serverRequest.ctx.shopifyConfig);
+
+  const {shopifyConfig} = serverRequest.ctx;
+  const settings = {
+    ...shopifyConfig,
+  };
+
+  return <DevToolsClient dataFromServer={{settings}} />;
 }

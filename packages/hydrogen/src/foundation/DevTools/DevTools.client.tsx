@@ -21,7 +21,7 @@ export function DevTools({dataFromServer}: {dataFromServer: any}) {
   if (hasMounted) {
     return (
       <Interface open={open} onClose={toggleOpen} onOpen={toggleOpen}>
-        <Panels />
+        <Panels {...dataFromServer} />
       </Interface>
     );
   }
