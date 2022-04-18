@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {Navigation, useNavigationListener} from '@shopify/react-performance';
 
+import {Performance} from './Performance';
+
 export interface Props {
   navigations?: Navigation[];
 }
@@ -8,6 +10,7 @@ export interface Props {
 interface Panel {
   content: string;
   panel: React.ReactNode;
+  icon: React.ReactNode;
 }
 
 interface Panels {
@@ -22,68 +25,70 @@ export function Panels({navigations}: Props) {
   const panelComponents = panels.map(({panel}) => panel);
 
   return (
-    <>
-      <div style={{}}>
-        {panels.map(({content, id}, index) => {
+    <div style={{display: 'flex'}}>
+      <div style={{borderRight: '1px solid', padding: '1em 0em'}}>
+        {panels.map(({content, icon, id}, index) => {
           const active = selectedPanel === index;
           return (
-            <div key={id}>
-              <button
-                type="button"
-                style={{color: active ? 'red' : 'black'}}
-                onClick={() => setSelectedPanel(index)}
-              >
-                {content}
-              </button>
-            </div>
+            <button
+              key={id}
+              type="button"
+              style={{
+                padding: '0em 1.25em',
+                fontWeight: active ? 'bold' : 'normal',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              onClick={() => setSelectedPanel(index)}
+            >
+              <span style={{paddingRight: '0.25em'}}>{icon}</span>
+              <span style={{fontFamily: 'monospace'}}>{content}</span>
+            </button>
           );
         })}
       </div>
-      <div>{panelComponents[selectedPanel ? selectedPanel : 0]}</div>
-    </>
+      <div style={{padding: '1.25em'}}>
+        {panelComponents[selectedPanel ? selectedPanel : 0]}
+      </div>
+    </div>
   );
 }
 
 function SettingsPanel() {
-  return <Panel title="Settings">Settings component</Panel>;
+  return <Panel>Settings component</Panel>;
 }
 
-function PerformancePanel() {
-  const [lastNavigation, setLastNavigation] = useState<Navigation | null>(null);
+// function PerformancePanel() {
+//   const [lastNavigation, setLastNavigation] = useState<Navigation | null>(null);
 
-  // listen for subsequent client-side navigations and update our state
-  useNavigationListener((navigation) => {
-    setLastNavigation(navigation);
-  });
+//   // listen for subsequent client-side navigations and update our state
+//   useNavigationListener((navigation) => {
+//     setLastNavigation(navigation);
+//   });
 
-  if (lastNavigation == null) {
-    return <p>no data</p>;
-  }
+//   if (lastNavigation == null) {
+//     return <p>no data</p>;
+//   }
 
-  const {duration, isFullPageNavigation, target} = lastNavigation;
+//   const {duration, isFullPageNavigation, target} = lastNavigation;
 
-  // output some information about the last navigation
-  const navigationType = isFullPageNavigation
-    ? 'full page navigation'
-    : 'single-page-app style navigation';
+//   // output some information about the last navigation
+//   const navigationType = isFullPageNavigation
+//     ? 'full page navigation'
+//     : 'single-page-app style navigation';
 
-  return (
-    <Panel title="Performance">
-      <p>
-        The last navigation was to {target}. It was a {navigationType}{' '}
-        navigation which took {duration / 1000} seconds to complete.
-      </p>
-    </Panel>
-  );
-}
+//   return (
+//     <Panel>
+//       <p>
+//         The last navigation was to {target}. It was a {navigationType}{' '}
+//         navigation which took {duration / 1000} seconds to complete.
+//       </p>
+//     </Panel>
+//   );
+// }
 
-function Panel({title, children}: {title: string; children: React.ReactNode}) {
-  return (
-    <div>
-      <h3>{title}</h3>
-      {children}
-    </div>
-  );
+function Panel({children}: {children: React.ReactNode}) {
+  return <div>{children}</div>;
 }
 
 function getPanels() {
@@ -91,10 +96,12 @@ function getPanels() {
     settings: {
       content: 'Settings',
       panel: <SettingsPanel />,
+      icon: '🎛',
     },
     performance: {
       content: 'Performance',
-      panel: <PerformancePanel />,
+      panel: <Performance />,
+      icon: '⏱',
     },
   };
 

@@ -10,64 +10,73 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export function Interface({
-  open,
-  onOpen,
-  activator,
-  children,
-  ...headerProps
-}: Props) {
+export function Interface({children, onClose, onOpen, ...props}: Props) {
+  const open = false || props.open;
   return (
     <div
       aria-hidden
       style={{
         position: 'fixed',
-        left: '100%',
-        width: '100%',
-        maxWidth: '300px',
-        bottom: open ? 0 : '-2em',
-        borderRadius: open ? 0 : '2em',
-        top: '100%',
         zIndex: 100,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
-        height: open ? '75%' : '4em',
-        transform: open
-          ? 'translate(-300px, -100%)'
-          : 'translate(-300px, -5em)',
+        right: 0,
+        bottom: 0,
+        padding: '1.5em',
+        maxWidth: '100%',
+        flexWrap: 'wrap',
       }}
     >
+      <button
+        type="button"
+        style={{
+          position: 'relative',
+          background: 'white',
+          border: '1px solid',
+          padding: '0em 0.5em 0.25em 1.25em',
+          boxShadow: '10px 10px 0px black',
+          display: 'flex',
+          alignItems: 'center',
+          color: 'black',
+        }}
+        onClick={onOpen}
+      >
+        <div style={{textAlign: 'left', flex: 1}}>
+          <Text>Dev tools</Text>
+        </div>{' '}
+        {open ? <CloseIcon /> : <HydrogenIcon />}
+      </button>
       <div
         style={{
+          display: open ? 'block' : 'none',
+          position: 'relative',
+          top: '-1px',
           overflow: 'scroll',
-          color: 'white',
+          color: 'black',
           height: '100%',
-          padding: '2em',
-          background: 'rgba(0, 0, 0, 0.95)',
-          borderRadius: open ? 0 : '2em',
+          background: 'white',
+          border: '1px solid',
+          boxShadow: '10px 10px 0px black',
+          maxWidth: '40em',
+          width: '100vw',
         }}
       >
         {children}
       </div>
-
-      <button
-        style={{
-          position: 'absolute',
-          top: '0.35em',
-          right: '1em',
-          overflow: 'hidden',
-          zIndex: 100,
-        }}
-        onClick={() => {
-          console.log('yo');
-          if (onOpen) {
-            onOpen();
-          }
-        }}
-      >
-        {open ? <CloseIcon /> : <HydrogenIcon />}
-      </button>
     </div>
+  );
+}
+
+function Text({children}: {children: string}) {
+  return (
+    <span
+      style={{
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+        paddingRight: '0.5em',
+      }}
+    >
+      {children}
+    </span>
   );
 }
