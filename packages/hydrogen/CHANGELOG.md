@@ -1,5 +1,48 @@
 # Changelog
 
+## 0.25.0
+
+### Minor Changes
+
+- [#1513](https://github.com/Shopify/hydrogen/pull/1513) [`8d67b559`](https://github.com/Shopify/hydrogen/commit/8d67b559e8d59d02ca353ec43fb5b2b3ff2f5961) Thanks [@frandiox](https://github.com/frandiox)! - **Breaking change:** We are starting to use [`exports` property in `package.json`](https://nodejs.org/api/packages.html#package-entry-points) to list all the entry points in this package.
+
+  This might incur breaking changes in some rare cases when importing private properties from Hydrogen `dist` files. Notice that we **discourage** doing so for anything that is not publicly documented but, if your app was relying on some private properties, then this might help:
+
+  ```diff
+  -import {xyz} from '@shopify/hydrogen/dist/esnext/<internal-path>';
+  +import {xyz} from '@shopify/hydrogen/<internal-path>';
+  ```
+
+  Aside from that, it is recommended that TypeScript projects update the `tsconfig.json` file to use `compilerOptions.moduleResolution: "node16"` to make sure Hydrogen types are loaded in your editor.
+  For JavaScript projects, create or edit `<root>/jsconfig.json` file with the following information to improve typings:
+
+  ```json
+  {
+    "compilerOptions": {
+      "target": "es2020",
+      "module": "esnext",
+      "moduleResolution": "node16",
+      "lib": ["dom", "dom.iterable", "scripthost", "es2020"],
+      "jsx": "react",
+      "types": ["vite/client"]
+    },
+    "exclude": ["node_modules", "dist"],
+    "include": ["**/*.js", "**/*.jsx"]
+  }
+  ```
+
+### Patch Changes
+
+- [#1494](https://github.com/Shopify/hydrogen/pull/1494) [`3b549439`](https://github.com/Shopify/hydrogen/commit/3b549439bae1ec43ae9171744c576c53d8e8f6f1) Thanks [@jplhomer](https://github.com/jplhomer)! - Update `flattenConnection` to accept `nodes` and `edges` payloads
+
+* [#1375](https://github.com/Shopify/hydrogen/pull/1375) [`217b5f23`](https://github.com/Shopify/hydrogen/commit/217b5f23613da794bb6879ab0c897b66ef6204cf) Thanks [@blittle](https://github.com/blittle)! - Add a built-in healthcheck route available at `/__health`. It responds with a 200 and no body. Also suppresses server logs for built-in routes like healthcheck and analytics.
+
+- [#1497](https://github.com/Shopify/hydrogen/pull/1497) [`3364225f`](https://github.com/Shopify/hydrogen/commit/3364225ff62d283893643ea28c0135ff22af1dff) Thanks [@blittle](https://github.com/blittle)! - Improve waterfall detection
+
+  1. Show a summary in dev mode with instructions on getting details
+  2. Only show the waterfall warning the second time the page is loaded
+  3. Don't show the waterfall warning on preloaded queries
+
 ## 0.24.0
 
 ### Minor Changes
